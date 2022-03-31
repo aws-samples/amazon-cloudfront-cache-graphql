@@ -32,7 +32,7 @@ If the deployment is successful, the CloudFront endpoint will be output.
 Run the following command multiple times. If the response string is the same, then the cache is working. If you change the query even slightly, the cache key will change and you will get a different string. Also, the TTL is set to 1 minute, so if more than 1 minute passes, it should be a different string. Replace the `<YOUR_CLOUDFRONT_ENDPOINT>` to the deployed endpoint.
 
 ```bash
-curl -XPOST -d '{"query":"xxx"}' -H "Content-Type:application/json" <YOUR_CLOUDFRONT_ENDPOINT>/queies
+curl -XPOST -d '{"query":"xxx"}' -H "Content-Type:application/json" <YOUR_CLOUDFRONT_ENDPOINT>/queries
 ```
 
 ## For the Production Workloads
