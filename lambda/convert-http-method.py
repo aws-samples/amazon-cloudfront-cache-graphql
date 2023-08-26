@@ -1,9 +1,5 @@
 import urllib.request
-import urllib.parse
-import json
 import base64
-from urllib.parse import parse_qs
-from urllib.parse import quote
 
 # Max cacheable size on each header.
 CACHE_PAYLOAD_SIZE_LIMIT = 1783
