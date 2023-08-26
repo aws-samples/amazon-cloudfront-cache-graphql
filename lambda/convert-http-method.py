@@ -28,9 +28,10 @@ def http_request(endpoint, method='GET', headers={}, data=None):
 
 # Convert urllib response header to cloudfront response header format.
 def response_headers(res):
-    headers_raw = dict(res.info())
-    headers = list(map(lambda x: { x: { 'key': x, 'value': headers_raw[x] } }, headers_raw.keys()))
-    return headers
+    return {
+        key.lower(): [{'key': key, 'value': val}]
+        for key, val in res.headers.items()
+    }
 
 
 # Split request payload
