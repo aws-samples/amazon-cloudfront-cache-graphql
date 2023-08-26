@@ -15,7 +15,7 @@ GRAPHQL_ENDPOINT = '/queries'
 def http_request(endpoint, method='GET', headers={}, data=None):
     req = urllib.request.Request(endpoint, method=method, headers=headers, data=data)
     res = urllib.request.urlopen(req)
-    res_code = res.getcode()
+    res_code = res.status
     res_body = res.read().decode('utf-8')
     res_headers = response_headers(res)
 
