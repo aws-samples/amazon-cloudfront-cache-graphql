@@ -10,6 +10,7 @@ NUM_SPLIT_MAX = 5
 # GraphQL endpoint
 GRAPHQL_ENDPOINT = '/queries'
 
+
 # Execute http request
 def http_request(endpoint, method='GET', headers={}, data=None):
     req = urllib.request.Request(endpoint, method=method, headers=headers, data=data)
@@ -24,11 +25,13 @@ def http_request(endpoint, method='GET', headers={}, data=None):
         'body': res_body
     }
 
+
 # Convert urllib response header to cloudfront response header format.
 def response_headers(res):
     headers_raw = dict(res.info())
     headers = list(map(lambda x: { x: { 'key': x, 'value': headers_raw[x] } }, headers_raw.keys()))
     return headers
+
 
 # Split request payload
 def split_payload(data):
@@ -49,6 +52,7 @@ def split_payload(data):
             payloads.append('')
 
     return payloads
+
 
 # Lambda@Edge handler
 def handler(event, context):
