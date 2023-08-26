@@ -35,7 +35,7 @@ def response_headers(res):
     }
 
 
-# Remove disallowd headers on lambda@edge
+# Remove disallowed headers on lambda@edge
 def remove_disallowed_headers(headers):
     return {
         key: val
