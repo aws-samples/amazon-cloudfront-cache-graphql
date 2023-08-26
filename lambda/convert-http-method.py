@@ -1,5 +1,6 @@
 import urllib.request
 import base64
+from disallowed_headers import is_blacklisted_or_readonly_header
 
 # Max cacheable size on each header.
 CACHE_PAYLOAD_SIZE_LIMIT = 1783
@@ -21,7 +22,7 @@ def http_request(endpoint, method='GET', headers={}, data=None):
 
     return {
         'status': res_code,
-        'headers': res_headers,
+        'headers': remove_disallowed_headers(res_headers),
         'body': res_body
     }
 
@@ -31,6 +32,15 @@ def response_headers(res):
     return {
         key.lower(): [{'key': key, 'value': val}]
         for key, val in res.headers.items()
+    }
+
+
+# Remove disallowd headers on lambda@edge
+def remove_disallowed_headers(headers):
+    return {
+        key: val
+        for key, val in headers.items()
+        if not is_blacklisted_or_readonly_header(key)
     }
 
 
