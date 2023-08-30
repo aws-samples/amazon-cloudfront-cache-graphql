@@ -1,9 +1,6 @@
 import urllib.request
-import urllib.parse
-import json
 import base64
-from urllib.parse import parse_qs
-from urllib.parse import quote
+from disallowed_headers import is_blacklisted_or_readonly_header
 
 # Max cacheable size on each header.
 CACHE_PAYLOAD_SIZE_LIMIT = 1783
@@ -14,25 +11,38 @@ NUM_SPLIT_MAX = 5
 # GraphQL endpoint
 GRAPHQL_ENDPOINT = '/queries'
 
+
 # Execute http request
 def http_request(endpoint, method='GET', headers={}, data=None):
     req = urllib.request.Request(endpoint, method=method, headers=headers, data=data)
     res = urllib.request.urlopen(req)
-    res_code = res.getcode()
+    res_code = res.status
     res_body = res.read().decode('utf-8')
     res_headers = response_headers(res)
 
     return {
         'status': res_code,
-        'headers': res_headers,
+        'headers': remove_disallowed_headers(res_headers),
         'body': res_body
     }
 
+
 # Convert urllib response header to cloudfront response header format.
 def response_headers(res):
-    headers_raw = dict(res.info())
-    headers = list(map(lambda x: { x: { 'key': x, 'value': headers_raw[x] } }, headers_raw.keys()))
-    return headers
+    return {
+        key.lower(): [{'key': key, 'value': val}]
+        for key, val in res.headers.items()
+    }
+
+
+# Remove disallowed headers on lambda@edge
+def remove_disallowed_headers(headers):
+    return {
+        key: val
+        for key, val in headers.items()
+        if not is_blacklisted_or_readonly_header(key)
+    }
+
 
 # Split request payload
 def split_payload(data):
@@ -53,6 +63,7 @@ def split_payload(data):
             payloads.append('')
 
     return payloads
+
 
 # Lambda@Edge handler
 def handler(event, context):
